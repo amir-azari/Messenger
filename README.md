@@ -33,7 +33,7 @@ This project is built using modern Android development practices and libraries.
 
 You can install the app on any Android device or emulator.
 
-1.  Go to the [**Releases**](https://github.com/amir-azari/Messenger/releases) page of this repository.
+1.  Go to the [**Releases**](https://github.com/amir-azari/Messenger/releases/tag/v1.0) page of this repository.
 2.  Download the latest `app-release.apk` file.
 3.  Open the downloaded file on your Android device to install it.
 
