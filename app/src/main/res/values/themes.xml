@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Messenger" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+
+        <item name="android:fontFamily">@font/vazir</item>
+        <item name="fontFamily">@font/vazir</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="colorOnBackground">@color/colorOnBackground</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+
+        <!-- TextInputLayout Hint Color -->
+        <item name="hintTextColor">@color/colorOnSurface</item>
+        <item name="android:textColor">@color/colorOnSurface</item>
+
+        <!-- Button Style -->
+        <item name="materialButtonStyle">@style/Widget.MyApp.Button</item>
+    </style>
+
+    <style name="Theme.Messenger" parent="Base.Theme.Messenger" />
+
+    <style name="Widget.MyApp.Button.Rectangle" parent="Widget.Material3.Button">
+        <item name="cornerRadius">4dp</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
+
+
+</resources>
