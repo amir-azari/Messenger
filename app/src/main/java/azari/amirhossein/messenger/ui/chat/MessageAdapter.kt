@@ -1,15 +1,19 @@
 package azari.amirhossein.messenger.ui.chat
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import azari.amirhossein.messenger.R
+import azari.amirhossein.messenger.data.models.ChatItem
 import azari.amirhossein.messenger.data.models.DateHeaderItem
 import azari.amirhossein.messenger.data.models.Message
 import azari.amirhossein.messenger.data.models.MessageItem
-import azari.amirhossein.messenger.data.models.ChatItem
 import azari.amirhossein.messenger.databinding.ItemDateHeaderBinding
 import azari.amirhossein.messenger.databinding.ItemMessageReceivedBinding
 import azari.amirhossein.messenger.databinding.ItemMessageSentBinding
@@ -17,12 +21,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MessageAdapter(private val currentUser: String) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback()) {
+class MessageAdapter(
+    private val currentUser: String,
+    private val onReplyClicked: (Message) -> Unit
+) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     companion object {
         private const val VIEW_TYPE_SENT = 1
         private const val VIEW_TYPE_RECEIVED = 2
-        private const val VIEW_TYPE_DATE_HEADER = 3
+        const val VIEW_TYPE_DATE_HEADER = 3
     }
 
     // ViewHolders
@@ -35,25 +42,71 @@ class MessageAdapter(private val currentUser: String) : ListAdapter<ChatItem, Re
 
     inner class SentMessageViewHolder(private val binding: ItemMessageSentBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            @SuppressLint("ClickableViewAccessibility")
+            // Handle touch events on the RecyclerView item
+            binding.motionLayout.setOnTouchListener { view, event ->
+                if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        val messageItem = getItem(bindingAdapterPosition) as MessageItem
+                        val motionLayout = view as MotionLayout
+
+                        if (motionLayout.progress > 0.9f) {
+                            onReplyClicked(messageItem.message)
+                        }
+                        motionLayout.transitionToState(R.id.start)
+                    }
+                }
+                return@setOnTouchListener false
+            }
+        }
+
         fun bind(message: Message) {
             binding.tvUser.isVisible = false
             binding.tvMessage.text = message.text
-
-            val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
-            val timeText = sdf.format(Date(message.timestamp))
-            binding.tvTime.text = timeText
+            if (message.replyToText != null && message.replyToSender != null) {
+                binding.replyContainer.isVisible = true
+                binding.replySender.text = message.replyToSender
+                binding.replyText.text = message.replyToText
+            } else {
+                binding.replyContainer.isVisible = false
+            }
         }
     }
 
     inner class ReceivedMessageViewHolder(private val binding: ItemMessageReceivedBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            @SuppressLint("ClickableViewAccessibility")
+            // Handle touch events on the RecyclerView item
+            binding.motionLayout.setOnTouchListener { view, event ->
+                if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        val messageItem = getItem(bindingAdapterPosition) as MessageItem
+                        val motionLayout = view as MotionLayout
+
+                        if (motionLayout.progress > 0.9f) {
+                            onReplyClicked(messageItem.message)
+                        }
+                        motionLayout.transitionToState(R.id.start)
+                    }
+                }
+                return@setOnTouchListener false
+            }
+        }
+
         fun bind(message: Message) {
             binding.tvUser.text = message.senderName
             binding.tvMessage.text = message.text
-
-            val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
-            val timeText = sdf.format(Date(message.timestamp))
-            binding.tvTime.text = timeText
+            if (message.replyToText != null && message.replyToSender != null) {
+                binding.replyContainer.isVisible = true
+                binding.replySender.text = message.replyToSender
+                binding.replyText.text = message.replyToText
+            } else {
+                binding.replyContainer.isVisible = false
+            }
         }
     }
 

@@ -14,4 +14,9 @@
     <color name="colorTimeMessage">#B2B2B2</color>
     <color name="colorBackgroundUsername">#25C3CACB</color>
 
+    <color name="reply_line_color">#BB86FC</color>
+    <color name="reply_user">#FFFFFF</color>
+    <color name="reply_text">#CCCCCC</color>
+
+
 </resources>

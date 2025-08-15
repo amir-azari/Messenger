@@ -82,4 +82,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
     implementation("com.google.firebase:firebase-database")
 
+    implementation(libs.androidx.recyclerview.selection)
+    implementation(libs.androidx.recyclerview)
+
+    implementation(libs.androidx.dynamicanimation.ktx)
 }

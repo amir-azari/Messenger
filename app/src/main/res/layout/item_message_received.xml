@@ -1,9 +1,25 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motion_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="2dp">
+    android:layout_marginVertical="2dp"
+    app:layoutDescription="@xml/item_message_received_scene">
+
+    <!-- Reply Icon -->
+    <ImageView
+        android:id="@+id/iv_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_reply"
+        app:tint="@color/colorOnBackground"
+
+        app:layout_constraintBottom_toBottomOf="@+id/bubble_layout"
+        app:layout_constraintTop_toTopOf="@+id/bubble_layout"
+        tools:ignore="MissingConstraints" />
 
     <!-- Guideline to limit the width of message bubbles -->
     <androidx.constraintlayout.widget.Guideline
@@ -40,16 +56,61 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Reply preview -->
+        <LinearLayout
+            android:id="@+id/replyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvUser">
+
+            <!-- Left colored line -->
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="@color/reply_line_color" />
+
+            <!-- Reply text content -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/replySender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    android:textColor="@color/reply_user"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/replyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Message preview"
+                    android:textColor="@color/reply_text" />
+            </LinearLayout>
+        </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tvUser"
-            app:layout_constraintEnd_toEndOf="parent"
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            >
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/replyContainer">
+
             <!-- Flow helper to arrange message and time horizontally -->
             <androidx.constraintlayout.helper.widget.Flow
                 android:layout_width="0dp"
@@ -81,7 +142,5 @@
                 android:textColor="@color/colorTimeMessage"
                 android:textSize="11sp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

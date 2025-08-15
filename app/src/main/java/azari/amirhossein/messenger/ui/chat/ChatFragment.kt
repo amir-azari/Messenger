@@ -1,14 +1,10 @@
 package azari.amirhossein.messenger.ui.chat
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,14 +12,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import azari.amirhossein.messenger.R
+import azari.amirhossein.messenger.data.models.Message
 import azari.amirhossein.messenger.databinding.FragmentChatBinding
-import azari.amirhossein.messenger.databinding.FragmentLoginBinding
-import azari.amirhossein.messenger.ui.chat.MessageAdapter
 import azari.amirhossein.messenger.viewmodel.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -42,7 +35,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -56,6 +49,27 @@ class ChatFragment : Fragment() {
         //load messages
         viewModel.loadMessages()
 
+        // Observe the replyMessage LiveData from the ViewModel
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.replyMessage.collect { message ->
+                    if (message != null) {
+                        // If there's a message to reply to, show the preview bar
+                        binding.replyPreviewLayout.visibility = View.VISIBLE
+                        binding.replySender.text = message.senderName
+                        binding.replyText.text = message.text
+                    } else {
+                        // Otherwise, hide it
+                        binding.replyPreviewLayout.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        // Handle closing the reply preview
+        binding.btnCloseReply.setOnClickListener {
+            viewModel.clearReplyMessage()
+        }
         // Observe messages
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -83,8 +97,11 @@ class ChatFragment : Fragment() {
 
     }
     private fun setupRecyclerView() {
-        adapter = MessageAdapter(args.username)
+        adapter = MessageAdapter(args.username) { message ->
+            viewModel.setReplyMessage(message)
+        }
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         binding.recyclerView.layoutManager = layoutManager
@@ -96,6 +113,7 @@ class ChatFragment : Fragment() {
             }
         })
     }
+
 
 
     override fun onDestroyView() {

@@ -24,6 +24,9 @@ class ChatViewModel @Inject constructor(private val repository: ChatRepository ,
     private val _messages = MutableStateFlow<List<ChatItem>>(emptyList())
     val messages: StateFlow<List<ChatItem>> = _messages
 
+    private val _replyMessage = MutableStateFlow<Message?>(null)
+    val replyMessage: StateFlow<Message?> = _replyMessage
+
     //Loads messages from the repository and updates the UI.
     fun loadMessages() {
         viewModelScope.launch {
@@ -101,12 +104,28 @@ class ChatViewModel @Inject constructor(private val repository: ChatRepository ,
     fun sendMessage(senderName: String, text: String) {
         if (text.isBlank()) return
         viewModelScope.launch {
+            val currentReply = _replyMessage.value
             val message = Message(
                 senderName = senderName,
                 text = text,
-                timestamp = System.currentTimeMillis()
+                timestamp = System.currentTimeMillis(),
+                replyToId = currentReply?.id,
+                replyToText = currentReply?.text,
+                replyToSender = currentReply?.senderName
             )
             repository.sendMessage(message)
+            // Clear reply after sending
+            clearReplyMessage()
         }
+    }
+
+    // Select a message for replying
+    fun setReplyMessage(message: Message) {
+        _replyMessage.value = message
+    }
+
+    // Clear reply message
+    fun clearReplyMessage() {
+        _replyMessage.value = null
     }
 }

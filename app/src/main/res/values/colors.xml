@@ -13,4 +13,8 @@
     <color name="colorMyMessage">#DCF8C6</color>
     <color name="colorTimeMessage">#888888</color>
     <color name="colorBackgroundUsername">#257D8080</color>
+
+    <color name="reply_line_color">#6200EE</color>
+    <color name="reply_user">#000000</color>
+    <color name="reply_text">#555555</color>
 </resources>
